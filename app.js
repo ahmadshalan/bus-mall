@@ -12,6 +12,7 @@ let middleImageIndex;
 let rightImageIndex;
 let productNames=[];
 let productVotes = [];
+
 let productView = [];
 
 function productImage(name, source, view) {
@@ -21,7 +22,23 @@ function productImage(name, source, view) {
     this.votes = 0;
     productImage.allImages.push(this);
     productNames.push(name);
+    
 }
+let res = localStorage.getItem('productImage');
+let res2 = JSON.parse(res);
+console.log(res2);
+if(res !== null){
+    gettingItems();
+    for (let i = 0; i < productImage.allImages.length; i++) {
+                
+        productVotes[i]=(productImage.allImages[i].votes);
+        
+        productView[i]=(productImage.allImages[i].view);
+    }
+    showList();
+    viewChart();
+}
+
 
 productImage.allImages = [];
 
@@ -46,7 +63,7 @@ new productImage('usb', 'img/usb.gif');
 new productImage('water-can', 'img/water-can.jpg');
 new productImage('wine-glass', 'img/wine-glass.jpg');
 
-console.log(productImage.allImages);
+// console.log(productImage.allImages);
 
 function generateRandomIndex() {
     return Math.floor(Math.random() * productImage.allImages.length);
@@ -70,9 +87,7 @@ function renderThreeImages() {
     productImage.allImages[rightImageIndex].view++
     
     middleImageElement.src = productImage.allImages[middleImageIndex].source;
-    productImage.allImages[middleImageIndex].view++
-
-    
+    productImage.allImages[middleImageIndex].view++ 
 }
 
 renderThreeImages();
@@ -82,55 +97,59 @@ middleImageElement.addEventListener('click', handleUserClick);
 rightImageElement.addEventListener('click', handleUserClick);
 
 function handleUserClick(event) {
-
+    
     userAttemptsCounter++;
-
+    
     console.log(event.target.id);
-
+    
     if (userAttemptsCounter <= maxAttempts) {
-
+        
         if (event.target.id === 'left-image') {
             productImage.allImages[leftImageIndex].votes++
-
-
+            
+            
         } else if (event.target.id === 'middle-image') {
-
+            
             productImage.allImages[middleImageIndex].votes++
-
+            
         } else {
             productImage.allImages[rightImageIndex].votes++
         }
         renderThreeImages();
     }
     else {
-
-        let list = document.getElementById('results-list');
+        
+        // let list = document.getElementById('results-list');
         // let button = document.createElement('button');
         // list.appendChild(button);
         // button.textContent = "show-result"
         // button.addEventListener('click', enter)
-
+        
         // function enter() {
-            let productResult;
-            for (let i = 0; i < productImage.allImages.length; i++) {
-                productResult = document.createElement('li');
-                list.appendChild(productResult);
-                productResult.textContent = productImage.allImages[i].name + ' has ' + productImage.allImages[i].votes
-                    + ' votes and was seen' + productImage.allImages[i].view;
-            }
-
-            rightImageElement.removeEventListener('click', handleUserClick);
-            middleImageElement.removeEventListener('click', handleUserClick);
-            leftImageElement.removeEventListener('click', handleUserClick);
-
-            for (let i = 0; i < productImage.allImages.length; i++) {
+            // let productResult;
+            // for (let i = 0; i < productImage.allImages.length; i++) {
+            //     productResult = document.createElement('li');
+            //     list.appendChild(productResult);
+            //     productResult.textContent = productImage.allImages[i].name + ' has ' + productImage.allImages[i].votes
+            //     + ' votes and was seen' + productImage.allImages[i].view;
+            // }
+            
+            // rightImageElement.removeEventListener('click', handleUserClick);
+            // middleImageElement.removeEventListener('click', handleUserClick);
+            // leftImageElement.removeEventListener('click', handleUserClick);
+            
+            // for (let i = 0; i < productImage.allImages.length; i++) {
                 
-                productVotes.push(productImage.allImages[i].votes);
-          
-                productView.push(productImage.allImages[i].view);
-              }
-              viewChart()    
-    }
+            //     productVotes[i]=(productImage.allImages[i].votes);
+                
+            //     productView[i]=(productImage.allImages[i].view);
+            // }
+            showList();
+        }
+        viewChart()    
+        settingItems();
+        // enter();
+    
 }
 function viewChart() {
 
@@ -156,9 +175,58 @@ function viewChart() {
             backgroundColor: 'red',
             borderColor: 'red',
             data: productView
-          },
+        },
         ]
       },
       options: {}
     });
+}
+
+
+function settingItems() {
+    
+    let data1 = productImage.allImages;
+    let data = JSON.stringify(data1);
+    // let data2 = JSON.stringify(productView);
+    
+    localStorage.setItem('productImage',data);
+    // localStorage.setItem('productView',data2);
+  }  
+  
+  function gettingItems() {
+    
+   let stringObject= localStorage.getItem('productImage');
+  
+    let normalObject=JSON.parse(stringObject);
+    
+    if ( normalObject!== null) {
+        
+        productImage.allImages=normalObject;
+    }
+    // console.log(productImage.allImages);
+    
+    renderThreeImages();
+    viewChart();
+  }
+  gettingItems()
+  function showList(){
+    let list = document.getElementById('results-list');
+    let productResult;
+    for (let i = 0; i < productImage.allImages.length; i++) {
+        productResult = document.createElement('li');
+        list.appendChild(productResult);
+        productResult.textContent = productImage.allImages[i].name + ' has ' + productImage.allImages[i].votes
+        + ' votes and was seen' + productImage.allImages[i].view;
+    }
+    
+    rightImageElement.removeEventListener('click', handleUserClick);
+    middleImageElement.removeEventListener('click', handleUserClick);
+    leftImageElement.removeEventListener('click', handleUserClick);
+    
+    for (let i = 0; i < productImage.allImages.length; i++) {
+        
+        productVotes[i]=(productImage.allImages[i].votes);
+        
+        productView[i]=(productImage.allImages[i].view);
+    }
 }
