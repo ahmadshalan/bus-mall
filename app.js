@@ -14,6 +14,7 @@ let productNames=[];
 let productVotes = [];
 
 let productView = [];
+let oldImages = [];
 
 function productImage(name, source, view) {
     this.name = name;
@@ -76,7 +77,9 @@ function renderThreeImages() {
     do {
         middleImageIndex = generateRandomIndex();
         rightImageIndex = generateRandomIndex();
-    } while((leftImageIndex===rightImageIndex)||(middleImageIndex===rightImageIndex)||(middleImageIndex===leftImageIndex))
+    } while((leftImageIndex===rightImageIndex)||(middleImageIndex===rightImageIndex)||
+    (middleImageIndex===leftImageIndex)||(oldImages.includes(leftImageIndex))||(oldImages.includes(rightImageIndex))||
+    (oldImages.includes(middleImageIndex)))
     
     productImage.allImages
     
@@ -88,6 +91,8 @@ function renderThreeImages() {
     
     middleImageElement.src = productImage.allImages[middleImageIndex].source;
     productImage.allImages[middleImageIndex].view++ 
+    
+    oldImages = [rightImageIndex,leftImageIndex,middleImageIndex];
 }
 
 renderThreeImages();
